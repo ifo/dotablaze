@@ -1,0 +1,22 @@
+{
+  "name": "dotablaze",
+  "version": "0.0.1",
+  "description": "a socket server for dotablaze",
+  "main": "index.js",
+  "dependencies": {
+    "jade": "^1.11.0",
+    "rethinkdb": "^2.2.1",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "dota",
+    "blaze"
+  ],
+  "author": "Steve <steve@redlua.com>",
+  "license": "ISC"
+}
