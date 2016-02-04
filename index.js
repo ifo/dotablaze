@@ -9,19 +9,29 @@ var index = jade.compileFile('assets/index.jade');
 var indexjs = fs.readFileSync(__dirname + '/assets/index.js')
 var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
 
+// TODO load config from a file
+var config = {
+  rethinkdb: {
+    host: 'localhost',
+    port: 28015,
+  },
+  table: 'test',
+  port: 3000
+};
+
 // allow no database initial setup testing
 var hasDatabase = process.argv.indexOf('nd') === -1;
 
 // setup database connection
 if (hasDatabase) {
   var conn;
-  r.connect({host: 'localhost', port: 28015}, function(err, connection) {
+  r.connect(config.rethinkdb, function(err, connection) {
     if (err) throw err;
     conn = connection;
   });
 }
 
-app.listen(3000);
+app.listen(config.port);
 
 function handler (req, res) {
   switch (req.url) {
@@ -43,7 +53,16 @@ function handler (req, res) {
 io.on('connection', function (socket) {
   socket.emit('games', testData);
   if (hasDatabase) {
-    r.table('games').changes().pluck('new_val').run(conn, function(err, cursor) {
+    var pluckPredicate = {
+      scoreboard: {
+        duration: true,
+        radiant: {tower_state: true},
+        dire: {tower_state: true}
+      }
+    };
+
+    r.table(config.table).changes().pluck('new_val')
+      .pluck(pluckPredicate).run(conn, function(err, cursor) {
       cursor.each(function(err, data) {
         socket.emit('games', data);
       });
