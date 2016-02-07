@@ -4,6 +4,7 @@ html(lang="en")
     title dotablaze
     script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.2.1/lodash.min.js')
     script#games-template(type='text/x-handlebars-template') !{gamesTemplate}
     script.
       var socket = io('#{host}');
