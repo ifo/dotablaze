@@ -55,22 +55,29 @@ function handler (req, res) {
 io.on('connection', function (socket) {
   socket.emit('games', testData);
   if (hasDatabase) {
-    var pluckPredicate = {
-      scoreboard: {
-        duration: true,
-        radiant: {tower_state: true},
-        dire: {tower_state: true}
+    gamesQuery().run(conn, function(err, cursor) {
+      if (err) {
+        console.log(err);
+      } else {
+        cursor.each(function(err, game) {
+          socket.emit('games', game.new_val);
+        });
       }
-    };
-
-    r.table(config.table).changes().pluck('new_val')
-      .pluck(pluckPredicate).run(conn, function(err, cursor) {
-      cursor.each(function(err, data) {
-        socket.emit('games', data);
-      });
     });
   }
 });
+
+function gamesQuery() {
+  var pluckPredicate = {
+    match_id: true,
+    scoreboard: {
+      duration: true,
+      radiant: {tower_state: true},
+      dire: {tower_state: true}
+    }
+  };
+  return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
+}
 
 // TODO remove test data
 var testData = {'games': [
