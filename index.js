@@ -11,15 +11,8 @@ var index = jade.compileFile(__dirname + '/assets/index.jade');
 var indexjs = fs.readFileSync(__dirname + '/assets/index.js');
 var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
 
-// TODO load config from a file
-var config = {
-  rethinkdb: {
-    host: 'localhost',
-    port: 28015,
-  },
-  table: 'test',
-  port: 3000
-};
+// load config
+var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
 
 // allow no database initial setup testing
 var hasDatabase = process.argv.indexOf('nd') === -1;
@@ -39,7 +32,10 @@ function handler (req, res) {
   switch (req.url) {
     case '/':
       res.writeHead(200);
-      res.end(index({host: 'http://localhost:3000', gamesTemplate: indexhbs}));
+      res.end(index({
+        host: [config.host, ':', config.port].join(''),
+        gamesTemplate: indexhbs
+      }));
       break;
     case '/index.js':
       res.writeHead(200, {'Content-Type': 'text/javascript'});
