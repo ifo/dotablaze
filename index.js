@@ -53,7 +53,6 @@ function handler (req, res) {
 }
 
 io.on('connection', function (socket) {
-  socket.emit('games', testData);
   if (hasDatabase) {
     gamesQuery().run(conn, function(err, cursor) {
       if (err) {
@@ -78,21 +77,3 @@ function gamesQuery() {
   };
   return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
 }
-
-// TODO remove test data
-var testData = {'games': [
-  {
-    'scoreboard': {
-      'duration': 500.12345,
-      'radiant': {'tower_state': 2048},
-      'dire': {'tower_state': 2048}
-    }
-  },
-  {
-    'scoreboard': {
-      'duration': 1500.12345,
-      'radiant': {'tower_state': 2000},
-      'dire': {'tower_state': 2000}
-    }
-  }
-]};
