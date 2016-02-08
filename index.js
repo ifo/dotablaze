@@ -6,8 +6,8 @@ var fs = require('fs');
 var jade = require('jade');
 var r = require('rethinkdb');
 
-// get assets file
-var index = jade.compileFile('assets/index.jade');
+// get assets files
+var index = jade.compileFile(__dirname + '/assets/index.jade');
 var indexjs = fs.readFileSync(__dirname + '/assets/index.js');
 var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
 
