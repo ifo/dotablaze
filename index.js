@@ -1,6 +1,6 @@
 "use strict";
 
-var app = require('http').createServer(handler)
+var app = require('http').createServer(handler);
 var io = require('socket.io')(app);
 var fs = require('fs');
 var jade = require('jade');
@@ -8,7 +8,7 @@ var r = require('rethinkdb');
 
 // get assets file
 var index = jade.compileFile('assets/index.jade');
-var indexjs = fs.readFileSync(__dirname + '/assets/index.js')
+var indexjs = fs.readFileSync(__dirname + '/assets/index.js');
 var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
 
 // TODO load config from a file
