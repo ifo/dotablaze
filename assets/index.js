@@ -3,7 +3,7 @@ window.onload = function() {
 
   var gamesTemplateSource = document.getElementById('games-template').innerHTML;
   var gamesTemplate = Handlebars.compile(gamesTemplateSource);
-  var gamesElement = document.getElementById('games');
+  var gamesElements = document.getElementsByClassName('games');
   var games = [];
 
   function mergeInGame(update) {
@@ -19,6 +19,6 @@ window.onload = function() {
 
   socket.on('games', function (data) {
     mergeInGame(data);
-    gamesElement.innerHTML = gamesTemplate({games: games});
+    gamesElements[0].innerHTML = gamesTemplate({games: games});
   });
 }
