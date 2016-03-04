@@ -3,6 +3,8 @@ dotablaze
 
 dotablaze is [Dota 2](http://blog.dota2.com/) api reader.
 It displays a tiny amount of information about all live Dota 2 games.
+Information is provided by [gotablaze](https://github.com/ifo/gotablaze),
+the api reader backend.
 
 Presently, that tiny amount of information is:
 - match ID
