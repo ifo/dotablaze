@@ -1,6 +1,6 @@
-"use strict";
-
 window.onload = function() {
+  "use strict";
+
   var gamesTemplateSource = document.getElementById('games-template').innerHTML;
   var gamesTemplate = Handlebars.compile(gamesTemplateSource);
   var gamesElement = document.getElementById('games');
