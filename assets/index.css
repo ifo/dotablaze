@@ -1,0 +1,45 @@
+body {
+  font-family: Tahoma,Verdana,Segoe,sans-serif;
+}
+
+.games {
+}
+
+.spinner {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.game {
+  border: 1px solid #444;
+  border-radius: 10px;
+  display: flex;
+  margin-bottom: 20px;
+  box-shadow: 5px 5px 4px #444;
+  overflow: hidden;
+}
+
+.team {
+  flex-basis: 40%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 25px;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 20%;
+  justify-content: center;
+  align-items: center;
+}
+
+.dire {
+  background-image: linear-gradient(to right, red, transparent 20%, transparent 90%, red, transparent);
+}
+
+.radiant {
+  background-image: linear-gradient(to left, green, transparent 20%, transparent 90%, green, transparent);
+}
