@@ -7,9 +7,11 @@ var jade = require('jade');
 var r = require('rethinkdb');
 
 // get assets files
+// TODO serve statically
 var index = jade.compileFile(__dirname + '/assets/index.jade');
 var indexjs = fs.readFileSync(__dirname + '/assets/index.js');
 var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
+var loadingSpinner = fs.readFileSync(__dirname + '/assets/ajax-loader.gif');
 
 // load config
 var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
@@ -40,6 +42,10 @@ function handler (req, res) {
     case '/index.js':
       res.writeHead(200, {'Content-Type': 'text/javascript'});
       res.end(indexjs);
+      break;
+    case '/ajax-loader.gif':
+      res.writeHead(200, {'Content-Type': 'image/gif'});
+      res.end(loadingSpinner);
       break;
     default:
       res.writeHead(404);
