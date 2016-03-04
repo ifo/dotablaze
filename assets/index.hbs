@@ -1,10 +1,26 @@
-<ul>
-  {{#each games}}
-  <li>
-    <div><b>Match ID</b> {{match_id}}</div>
-    <div><b>Duration</b> {{scoreboard.duration}}</div>
-    <div><b>Radiant Tower State Number</b> {{scoreboard.radiant.tower_state}}</div>
-    <div><b>Dire Tower State Number</b> {{scoreboard.radiant.tower_state}}</div>
-  </li>
-  {{/each}}
-</ul>
+{{#each games}}
+<div class='game'>
+  <div class='dire team'>
+    <h2>Dire Team Name Placeholder</h2>
+    <h2>{{scoreboard.radiant.score}}</h2>
+    <div class='heroes'>
+    {{#each scoreboard.radiant.players}}
+      <span>{{hero_id}}</span> &nbsp;
+    {{/each}}
+    </div>
+  </div>
+  <div class='game-info'>
+    <h2>VS.</h2>
+    <h2>{{printTimer scoreboard.duration}}</h2>
+  </div>
+  <div class='radiant team'>
+    <h2>Radiant Team Name Placeholder</h2>
+    <h2>{{scoreboard.dire.score}}</h2>
+    <div class='heroes'>
+    {{#each scoreboard.dire.players}}
+      <span>{{hero_id}}</span> &nbsp;
+    {{/each}}
+    </div>
+  </div>
+</div>
+{{/each}}

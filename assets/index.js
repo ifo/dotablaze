@@ -21,4 +21,16 @@ window.onload = function() {
     mergeInGame(data);
     gamesElements[0].innerHTML = gamesTemplate({games: games});
   });
+
+  Handlebars.registerHelper("printTimer", function(time) {
+    if (!time) {
+      return "0:00";
+    }
+    var seconds = Math.floor(time) % 60;
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+    var minutes = Math.floor(time / 60);
+    return `${minutes}:${seconds}`;
+  });
 }

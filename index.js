@@ -75,11 +75,20 @@ io.on('connection', function (socket) {
 
 function gamesQuery() {
   var pluckPredicate = {
-    match_id: true,
     scoreboard: {
       duration: true,
-      radiant: {tower_state: true},
-      dire: {tower_state: true}
+      radiant: {
+        score: true,
+        players: {
+          hero_id: true
+        }
+      },
+      dire: {
+        score: true,
+        players: {
+          hero_id: true
+        }
+      }
     }
   };
   return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
