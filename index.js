@@ -75,6 +75,7 @@ io.on('connection', function (socket) {
 
 function gamesQuery() {
   var pluckPredicate = {
+    match_id: true,
     scoreboard: {
       duration: true,
       radiant: {
