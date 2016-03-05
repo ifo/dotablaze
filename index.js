@@ -10,8 +10,9 @@ var r = require('rethinkdb');
 // TODO serve statically
 var index = jade.compileFile(__dirname + '/assets/index.jade');
 var indexjs = fs.readFileSync(__dirname + '/assets/index.js');
-var indexhbs = fs.readFileSync(__dirname + '/assets/index.hbs');
 var indexcss = fs.readFileSync(__dirname + '/assets/index.css');
+var tournamenthbs = fs.readFileSync(__dirname + '/assets/handlebars/tournament.hbs');
+var teamhbs = fs.readFileSync(__dirname + '/assets/handlebars/team.hbs');
 var loadingSpinner = fs.readFileSync(__dirname + '/assets/ajax-loader.gif');
 
 // load config
@@ -37,7 +38,8 @@ function handler (req, res) {
       res.writeHead(200);
       res.end(index({
         host: [config.host, ':', config.port].join(''),
-        gamesTemplate: indexhbs
+        tournamentTemplate: tournamenthbs,
+        teamTemplate: teamhbs
       }));
       break;
     case '/index.js':

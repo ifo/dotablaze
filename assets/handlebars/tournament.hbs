@@ -1,0 +1,10 @@
+{{#each games}}
+<div class='game'>
+  {{> team scoreboard.dire team='dire'}}
+  <div class='game-info'>
+    <h2>VS.</h2>
+    <h2>{{printTimer scoreboard.duration}}</h2>
+  </div>
+  {{> team scoreboard.radiant team='radiant'}}
+</div>
+{{/each}}

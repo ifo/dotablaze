@@ -1,9 +1,12 @@
 window.onload = function() {
   "use strict";
 
-  var gamesTemplateSource = document.getElementById('games-template').innerHTML;
-  var gamesTemplate = Handlebars.compile(gamesTemplateSource);
-  var gamesElements = document.getElementsByClassName('games');
+  var tournamentTemplateSource = document.getElementById('tournament-template').innerHTML;
+  var tournamentTemplate = Handlebars.compile(tournamentTemplateSource);
+  var teamTemplateSource = document.getElementById('team-template').innerHTML;
+  var teamTemplate = Handlebars.compile(teamTemplateSource);
+  Handlebars.registerPartial('team', teamTemplate);
+  var tournamentElements = document.getElementsByClassName('games');
   var games = [];
 
   function mergeInGame(update) {
@@ -19,7 +22,7 @@ window.onload = function() {
 
   socket.on('games', function (data) {
     mergeInGame(data);
-    gamesElements[0].innerHTML = gamesTemplate({games: games});
+    tournamentElements[0].innerHTML = tournamentTemplate({games: games});
   });
 
   Handlebars.registerHelper("printTimer", function(time) {
