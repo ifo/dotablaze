@@ -2,12 +2,14 @@ window.onload = function() {
   "use strict";
 
   var tournamentTemplateSource = document.getElementById('tournament-template').innerHTML;
-  var tournamentTemplate = Handlebars.compile(tournamentTemplateSource);
   var teamTemplateSource = document.getElementById('team-template').innerHTML;
-  var teamTemplate = Handlebars.compile(teamTemplateSource);
+  var socketSource = document.getElementById('socket-source').innerHTML;
   var tournamentElements = document.getElementsByClassName('games');
-  var socketHost = document.getElementById('socket-host').innerHTML;
-  var socket = io(socketHost);
+
+  var tournamentTemplate = Handlebars.compile(tournamentTemplateSource);
+  var teamTemplate = Handlebars.compile(teamTemplateSource);
+  var socket = io(socketSource);
+
   var games = [];
 
   // setup handlebars
@@ -26,26 +28,30 @@ window.onload = function() {
   });
 
   // setup socket.io
-  socket.on('load', function(data) {
-    games = data;
-    tournamentElements[0].innerHTML = tournamentTemplate({games: games});
+  socket.on('load', function(startingGames) {
+    games = startingGames;
+    updateDisplay(games);
   });
 
-  socket.on('games', function (data) {
-    games = mergeInGame(data, games);
-    tournamentElements[0].innerHTML = tournamentTemplate({games: games});
+  socket.on('game', function (game) {
+    games = updateGame(game, games);
+    updateDisplay(games);
   });
 
-  function mergeInGame(update, games) {
+  function updateGame(game, games) {
     var i = _.findIndex(games, function(g) {
-      return g.match_id === update.match_id;
+      return g.match_id === game.match_id;
     });
     if (i === -1) {
-      games.push(update);
+      games.push(game);
       return games;
     } else {
-      _.merge(games[i], update);
+      _.merge(games[i], game);
       return games;
     }
+  }
+
+  function updateDisplay(games) {
+    tournamentElements[0].innerHTML = tournamentTemplate({games: games});
   }
 }

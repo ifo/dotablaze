@@ -76,7 +76,7 @@ io.on('connection', function (socket) {
       } else {
         cursor.each(function(err, game) {
           cache.games = updateGame(game.new_val, cache.games);
-          socket.emit('games', game.new_val);
+          socket.emit('game', game.new_val);
           cache.timestamps = updateTimestamp(game.new_val.match_id, cache.timestamps);
         });
       }
