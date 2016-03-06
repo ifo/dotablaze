@@ -7,6 +7,8 @@ window.onload = function() {
   var teamTemplate = Handlebars.compile(teamTemplateSource);
   Handlebars.registerPartial('team', teamTemplate);
   var tournamentElements = document.getElementsByClassName('games');
+  var socketHost = document.getElementById('socket-host').innerHTML;
+  var socket = io(socketHost);
   var games = [];
 
   function mergeInGame(update) {

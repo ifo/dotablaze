@@ -8,8 +8,7 @@ html(lang="en")
     script(src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.2.1/lodash.min.js')
     script#tournament-template(type='text/x-handlebars-template') !{tournamentTemplate}
     script#team-template(type='text/x-handlebars-template') !{teamTemplate}
-    script.
-      var socket = io('#{host}');
+    script#socket-host(type='text') !{host}
   body
     p
       strong dotablaze
