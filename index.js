@@ -5,6 +5,7 @@ var io = require('socket.io')(app);
 var fs = require('fs');
 var jade = require('jade');
 var r = require('rethinkdb');
+var _ = require('lodash');
 
 // get assets files
 // TODO serve statically
