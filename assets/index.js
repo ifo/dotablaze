@@ -11,19 +11,21 @@ window.onload = function() {
   var socket = io(socketHost);
   var games = [];
 
-  function mergeInGame(update) {
+  function mergeInGame(update, games) {
     var i = _.findIndex(games, function(g) {
       return g.match_id === update.match_id;
     });
     if (i === -1) {
       games.push(update);
+      return games;
     } else {
       _.merge(games[i], update);
+      return games;
     }
   }
 
   socket.on('games', function (data) {
-    mergeInGame(data);
+    games = mergeInGame(data, games);
     tournamentElements[0].innerHTML = tournamentTemplate({games: games});
   });
 
