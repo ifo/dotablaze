@@ -22,6 +22,9 @@ var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
 // allow no database initial setup testing
 var hasDatabase = process.argv.indexOf('nd') === -1;
 
+// make cache for quick game loading
+var gameCache = [];
+
 // setup database connection
 if (hasDatabase) {
   var conn;
@@ -64,15 +67,21 @@ function handler (req, res) {
 
 io.on('connection', function (socket) {
   if (hasDatabase) {
+    if (gameCache.length != 0) {
+      socket.emit('load', gameCache);
+    }
     gamesQuery().run(conn, function(err, cursor) {
       if (err) {
         console.log(err);
       } else {
         cursor.each(function(err, game) {
+          gameCache = updateGames(game.new_val, gameCache);
           socket.emit('games', game.new_val);
         });
       }
     });
+  } else {
+    socket.emit('load', config.testGames);
   }
 });
 
@@ -96,4 +105,17 @@ function gamesQuery() {
     }
   };
   return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
+}
+
+function updateGames(game, games) {
+  var i = _.findIndex(games, function(g) {
+    return g.match_id === game.match_id;
+  });
+  if (i === -1) {
+    games.push(game);
+    return games;
+  } else {
+    _.merge(games[i], game);
+    return games;
+  }
 }

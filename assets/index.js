@@ -26,6 +26,11 @@ window.onload = function() {
   });
 
   // setup socket.io
+  socket.on('load', function(data) {
+    games = data;
+    tournamentElements[0].innerHTML = tournamentTemplate({games: games});
+  });
+
   socket.on('games', function (data) {
     games = mergeInGame(data, games);
     tournamentElements[0].innerHTML = tournamentTemplate({games: games});
