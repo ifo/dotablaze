@@ -23,7 +23,7 @@ var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
 var hasDatabase = process.argv.indexOf('nd') === -1;
 
 // make cache for quick game loading
-var gameCache = [];
+var cache = {games: [], timestamps: {}};
 
 // setup database connection
 if (hasDatabase) {
@@ -67,16 +67,17 @@ function handler (req, res) {
 
 io.on('connection', function (socket) {
   if (hasDatabase) {
-    if (gameCache.length != 0) {
-      socket.emit('load', gameCache);
+    if (cache.games.length != 0) {
+      socket.emit('load', cache.games);
     }
     gamesQuery().run(conn, function(err, cursor) {
       if (err) {
         console.log(err);
       } else {
         cursor.each(function(err, game) {
-          gameCache = updateGames(game.new_val, gameCache);
+          cache.games = updateGame(game.new_val, cache.games);
           socket.emit('games', game.new_val);
+          cache.timestamps = updateTimestamp(game.new_val.match_id, cache.timestamps);
         });
       }
     });
@@ -84,6 +85,13 @@ io.on('connection', function (socket) {
     socket.emit('load', config.testGames);
   }
 });
+
+// every 5 minutes delete games that haven't been updated in the last 5 minutes
+if (hasDatabase) {
+  setInterval(function() {
+    cache = cleanCache(cache, 5 * 60);
+  }, 5 * 60 * 1000);
+}
 
 function gamesQuery() {
   var pluckPredicate = {
@@ -107,7 +115,7 @@ function gamesQuery() {
   return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
 }
 
-function updateGames(game, games) {
+function updateGame(game, games) {
   var i = _.findIndex(games, function(g) {
     return g.match_id === game.match_id;
   });
@@ -118,4 +126,40 @@ function updateGames(game, games) {
     _.merge(games[i], game);
     return games;
   }
+}
+
+function removeGame(matchId, games) {
+  var i = _.findIndex(games, function(g) {
+    return g.match_id === matchId;
+  });
+  if (i !== -1) {
+    games.splice(i, 1);
+  }
+  return games;
+}
+
+function updateTimestamp(matchId, timestamps) {
+  timestamps[matchId] = Date.now() * 1000;
+  return timestamps;
+}
+
+// remove games and timestamps with timestamps older than maxAge seconds
+function cleanCache(cache, maxAge) {
+  var gamesToRemove = getOldGames(cache.timestamps, maxAge);
+  gamesToRemove.forEach(function(matchId) {
+    cache.games = removeGame(matchId, cache.games);
+    delete cache.timestamps[matchId];
+  });
+  return cache;
+}
+
+function getOldGames(timestamps, maxAge) {
+  var now = Date.now() * 1000;
+  var oldTimes = [];
+  Object.keys(timestamps).forEach(function(matchId) {
+    if (timestamps[matchId] + maxAge < now) {
+      oldTimes.push(matchId);
+    }
+  });
+  return oldTimes;
 }
