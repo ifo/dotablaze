@@ -139,7 +139,7 @@ function removeGame(matchId, games) {
 }
 
 function updateTimestamp(matchId, timestamps) {
-  timestamps[matchId] = Date.now() * 1000;
+  timestamps[matchId] = Math.floor(Date.now() / 1000);
   return timestamps;
 }
 
@@ -154,7 +154,7 @@ function cleanCache(cache, maxAge) {
 }
 
 function getOldGames(timestamps, maxAge) {
-  var now = Date.now() * 1000;
+  var now = Math.floor(Date.now() / 1000);
   var oldTimes = [];
   Object.keys(timestamps).forEach(function(matchId) {
     if (timestamps[matchId] + maxAge < now) {
