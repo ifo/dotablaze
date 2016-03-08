@@ -76,8 +76,8 @@ io.on('connection', function (socket) {
       } else {
         cursor.each(function(err, game) {
           var matchId = game.new_val.match_id;
-          cache.games[matchId] = merge(games[matchId], game.new_val);
-          lastUpdates[matchId] = currentSeconds();
+          cache.games[matchId] = merge(cache.games[matchId], game.new_val);
+          cache.lastUpdates[matchId] = currentSeconds();
           socket.emit('game', game.new_val);
         });
       }
