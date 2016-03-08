@@ -86,11 +86,11 @@ io.on('connection', function (socket) {
   }
 });
 
-// every 5 minutes delete games that haven't been updated in the last 5 minutes
+// every minute delete games that haven't been updated in the last 5 minutes
 if (hasDatabase) {
   setInterval(function() {
     cache = cleanCache(cache, 5 * 60);
-  }, 5 * 60 * 1000);
+  }, 60 * 1000);
 }
 
 function gamesQuery() {
