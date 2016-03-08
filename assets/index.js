@@ -34,14 +34,9 @@ window.onload = function() {
   });
 
   socket.on('game', function (game) {
-    games = updateGame(game, games);
+    games[game.match_id] = _.merge(games[game.match_id], game);
     updateDisplay(games);
   });
-
-  function updateGame(game, games) {
-    games[game.match_id] = _.merge(games[game.match_id], game);
-    return games;
-  }
 
   function updateDisplay(games) {
     tournamentElements[0].innerHTML = tournamentTemplate({games: games});

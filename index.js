@@ -23,7 +23,7 @@ var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
 var hasDatabase = process.argv.indexOf('nd') === -1;
 
 // make cache for quick game loading
-var cache = {games: {}, timestamps: {}};
+var cache = {games: {}, lastUpdates: {}};
 
 // setup database connection
 if (hasDatabase) {
@@ -75,9 +75,10 @@ io.on('connection', function (socket) {
         console.log(err);
       } else {
         cursor.each(function(err, game) {
-          cache.games = updateGame(game.new_val, cache.games);
+          var matchId = game.new_val.match_id;
+          cache.games[matchId] = merge(games[matchId], game.new_val);
+          lastUpdates[matchId] = currentSeconds();
           socket.emit('game', game.new_val);
-          cache.timestamps = updateTimestamp(game.new_val.match_id, cache.timestamps);
         });
       }
     });
@@ -115,38 +116,22 @@ function gamesQuery() {
   return r.table(config.table).pluck(pluckPredicate).changes().pluck('new_val');
 }
 
-function updateGame(game, games) {
-  games[game.match_id] = merge(games[game.match_id], game);
-  return games;
-}
-
-function removeGame(matchId, games) {
-  delete games[matchId];
-  return games;
-}
-
-function updateTimestamp(matchId, timestamps) {
-  timestamps[matchId] = Math.floor(Date.now() / 1000);
-  return timestamps;
-}
-
-// remove games and timestamps with timestamps older than maxAge seconds
+// remove games with a lastUpdate older than maxAge seconds
 function cleanCache(cache, maxAge) {
-  var gamesToRemove = getOldGames(cache.timestamps, maxAge);
-  gamesToRemove.forEach(function(matchId) {
-    cache.games = removeGame(matchId, cache.games);
-    delete cache.timestamps[matchId];
+  gamesToRemove(cache.lastUpdates, maxAge).forEach(function(matchId) {
+    delete cache.games[matchId];
+    delete cache.lastUpdates[matchId];
   });
   return cache;
 }
 
-function getOldGames(timestamps, maxAge) {
-  var now = Math.floor(Date.now() / 1000);
-  var oldTimes = [];
-  Object.keys(timestamps).forEach(function(matchId) {
-    if (timestamps[matchId] + maxAge < now) {
-      oldTimes.push(matchId);
-    }
+function gamesToRemove(lastUpdates, maxAge) {
+  var now = currentSeconds();
+  return Object.keys(lastUpdates).filter(function(matchId) {
+    return lastUpdates[matchId] + maxAge < now;
   });
-  return oldTimes;
+}
+
+function currentSeconds() {
+  return Math.floor(Date.now() / 1000);
 }
