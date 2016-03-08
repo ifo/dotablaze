@@ -23,7 +23,7 @@ var config = JSON.parse(fs.readFileSync(__dirname + '/config.json'));
 var hasDatabase = process.argv.indexOf('nd') === -1;
 
 // make cache for quick game loading
-var cache = {games: [], timestamps: {}};
+var cache = {games: {}, timestamps: {}};
 
 // setup database connection
 if (hasDatabase) {
@@ -67,7 +67,7 @@ function handler (req, res) {
 
 io.on('connection', function (socket) {
   if (hasDatabase) {
-    if (cache.games.length != 0) {
+    if (Object.keys(cache.games).length !== 0) {
       socket.emit('load', cache.games);
     }
     gamesQuery().run(conn, function(err, cursor) {
@@ -116,25 +116,12 @@ function gamesQuery() {
 }
 
 function updateGame(game, games) {
-  var i = _.findIndex(games, function(g) {
-    return g.match_id === game.match_id;
-  });
-  if (i === -1) {
-    games.push(game);
-    return games;
-  } else {
-    _.merge(games[i], game);
-    return games;
-  }
+  games[game.match_id] = _.merge(games[game.match_id], game);
+  return games;
 }
 
 function removeGame(matchId, games) {
-  var i = _.findIndex(games, function(g) {
-    return g.match_id === matchId;
-  });
-  if (i !== -1) {
-    games.splice(i, 1);
-  }
+  delete games[matchId];
   return games;
 }
 

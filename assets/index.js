@@ -10,7 +10,7 @@ window.onload = function() {
   var teamTemplate = Handlebars.compile(teamTemplateSource);
   var socket = io(socketSource);
 
-  var games = [];
+  var games = {};
 
   // setup handlebars
   Handlebars.registerPartial('team', teamTemplate);
@@ -39,16 +39,8 @@ window.onload = function() {
   });
 
   function updateGame(game, games) {
-    var i = _.findIndex(games, function(g) {
-      return g.match_id === game.match_id;
-    });
-    if (i === -1) {
-      games.push(game);
-      return games;
-    } else {
-      _.merge(games[i], game);
-      return games;
-    }
+    games[game.match_id] = _.merge(games[game.match_id], game);
+    return games;
   }
 
   function updateDisplay(games) {
