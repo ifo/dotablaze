@@ -5,7 +5,7 @@ var io = require('socket.io')(app);
 var fs = require('fs');
 var jade = require('jade');
 var r = require('rethinkdb');
-var _ = require('lodash');
+var merge = require('lodash.merge');
 
 // get assets files
 // TODO serve statically
@@ -116,7 +116,7 @@ function gamesQuery() {
 }
 
 function updateGame(game, games) {
-  games[game.match_id] = _.merge(games[game.match_id], game);
+  games[game.match_id] = merge(games[game.match_id], game);
   return games;
 }
 
